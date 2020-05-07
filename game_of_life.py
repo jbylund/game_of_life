@@ -9,9 +9,11 @@ So keep track of state of cell (live/dead)
 and counts of neighbors (birth of cell increments all neighbors (8) by 1, death of cell decrements live neighbors by 1)
 """
 
+import itertools
 import pprint
 import random
 import time
+
 
 class GameOfLife:
     LIVE = 1
@@ -24,6 +26,14 @@ class GameOfLife:
         self.cell_states = []
         self.live_neighbor_counts = []
         self.zero_out()
+
+        self.neighbors_map = set(
+            itertools.product(
+                range(-1, 2),
+                range(-1, 2)
+            )
+        )
+        self.neighbors_map.remove((0, 0))
 
     def zero_out(self):
         self.cell_states[:] = []
@@ -40,8 +50,9 @@ class GameOfLife:
         print("Cell states:")
         pprint.pprint(self.cell_states, width=width)
 
-        print("Neighbor counts:")
-        pprint.pprint(self.live_neighbor_counts, width=width)
+        if False:
+            print("Neighbor counts:")
+            pprint.pprint(self.live_neighbor_counts, width=width)
 
     def seed(self, num_cells):
         while num_cells > 0:
@@ -69,17 +80,14 @@ class GameOfLife:
             raise AssertionError("can only increment or decrement")
         maxrow = self.dimensions[0]
         maxcol = self.dimensions[1]
-        for rowoffset in [-1, 0, 1]:
-            for coloffset in [-1, 0, 1]:
-                if (rowoffset, coloffset) == 0:
-                    continue
-                newrow = rowidx + rowoffset
-                newcol = colidx + coloffset
-                if newrow < 0 or newcol < 0:
-                    continue
-                if newrow >= maxrow or newcol >= maxcol:
-                    continue
-                self.live_neighbor_counts[newrow][newcol] += step
+        for rowoffset, coloffset in self.neighbors_map:
+            newrow = rowidx + rowoffset
+            newcol = colidx + coloffset
+            if newrow < 0 or newcol < 0:
+                continue
+            if newrow >= maxrow or newcol >= maxcol:
+                continue
+            self.live_neighbor_counts[newrow][newcol] += step
 
     def increment_neighbors(self, rowidx, colidx):
         return self.delta_neighbors(rowidx, colidx, step=1)
@@ -99,11 +107,11 @@ class GameOfLife:
                 if cell_state:
                     self.increment_neighbors(rowidx, colidx)
 
-
     def advance(self):
         # Any live cell with fewer than two live neighbours dies, as if by underpopulation.
         # Any live cell with more than three live neighbours dies, as if by overpopulation.
-        # Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
+        # Any dead cell with exactly three live neighbours becomes a live cell,
+        # as if by reproduction.
         to_birth = []
         to_die = []
         for rowidx, irow in enumerate(self.cell_states):
@@ -137,7 +145,7 @@ class GameOfLife:
 
 
 def main():
-    mygame = GameOfLife() # setup the board
+    mygame = GameOfLife()  # setup the board
     random.seed(0)
     mygame.seed(10)
     mygame.dump()
@@ -146,7 +154,6 @@ def main():
             print("All cells are dead, game over.")
             break
         made_changes = mygame.advance()
-        print(made_changes)
         mygame.dump()
         if made_changes is False:
             print("Reached a steady state, game over.")
