@@ -38,8 +38,15 @@ class GameOfLife:
     def dump(self):
         # turn it into a dense representation and dump that
         print("Cell states:")
-        as_dense = [[int((rownum, colnum) in self.live_cells) for rownum in range(self.rows)] for colnum in range(self.cols)]
-        pprint.pprint(as_dense, width=3*self.rows + 3)
+        for irow in range(self.rows):
+            to_output = []
+            for icol in range(self.cols):
+                if (irow, icol) in self.live_cells:
+                    to_output.append("██")
+                else:
+                    to_output.append("  ")
+            print("".join(to_output))
+        print()
 
     def randcell(self):
         return random.randint(0, self.rows), random.randint(0, self.cols)
@@ -73,11 +80,11 @@ class GameOfLife:
 
 
 def main():
-    mygame = GameOfLife(rows=3, cols=3)  # setup the board
+    mygame = GameOfLife(rows=20, cols=20)  # setup the board
     random.seed(0)
-    mygame.seed(10)
+    mygame.seed(30)
     mygame.dump()
-    for iturn in range(50):
+    for iturn in range(70):
         if 0 == mygame.live_cell_count():
             print("All cells are dead, game over.")
             break
