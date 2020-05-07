@@ -39,8 +39,7 @@ class GameOfLife:
         # turn it into a dense representation and dump that
         print("Cell states:")
         as_dense = [[int((rownum, colnum) in self.live_cells) for rownum in range(self.rows)] for colnum in range(self.cols)]
-        pprint.pprint(sorted(as_dense), width=3*self.rows + 3)
-        print(self.live_cell_count())
+        pprint.pprint(as_dense, width=3*self.rows + 3)
 
     def randcell(self):
         return random.randint(0, self.rows), random.randint(0, self.cols)
