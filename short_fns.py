@@ -70,6 +70,7 @@ class GameOfLife:
         to_die = set(lc for lc in self.live_cells if nc.get(lc, 0) not in [2, 3])
         to_birth = set(dc for dc in set(nc) - set(self.live_cells) if nc.get(dc, 0) == 3)
         self.live_cells = (self.live_cells - to_die | to_birth) & self.get_dense_cells()
+        return bool(to_die) or bool(to_birth)
 
 
 def main():
