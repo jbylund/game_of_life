@@ -13,12 +13,14 @@ import pprint
 import random
 import time
 
-LIVE = 1
-DEAD = 0
-
 class GameOfLife:
-    def __init__(self):
-        self.dimensions = (4, 4)
+    LIVE = 1
+    DEAD = 0
+
+    def __init__(self, rows=4, cols=4):
+        if min(rows, cols) < 1:
+            raise AssertionError("Must have both rows and cols!")
+        self.dimensions = (rows, cols)
         self.cell_states = []
         self.live_neighbor_counts = []
         self.zero_out()
@@ -30,7 +32,7 @@ class GameOfLife:
             self.cell_states.append([])
             self.live_neighbor_counts.append([])
             for colnum in range(self.dimensions[1]):
-                self.cell_states[-1].append(DEAD)
+                self.cell_states[-1].append(self.DEAD)
                 self.live_neighbor_counts[-1].append(0)
 
     def dump(self):
@@ -49,7 +51,7 @@ class GameOfLife:
                 if proposed_row[proposed_col]:
                     continue
                 else:
-                    proposed_row[proposed_col] = LIVE
+                    proposed_row[proposed_col] = self.LIVE
                     break
             else:
                 break
@@ -107,14 +109,14 @@ class GameOfLife:
         for rowidx, irow in enumerate(self.cell_states):
             for colidx, cell_state in enumerate(irow):
                 cell_neighbor_count = self.live_neighbor_counts[rowidx][colidx]
-                if cell_state is LIVE:
+                if cell_state is self.LIVE:
                     if cell_neighbor_count < 2:
                         to_die.append((rowidx, colidx))
                     elif 3 < cell_neighbor_count:
                         to_die.append((rowidx, colidx))
                     else:
                         pass
-                elif cell_state is DEAD:
+                elif cell_state is self.DEAD:
                     if 3 == cell_neighbor_count:
                         to_birth.append((rowidx, colidx))
                 else:
@@ -122,12 +124,12 @@ class GameOfLife:
 
         # birth cells
         for rowidx, colidx in to_birth:
-            self.cell_states[rowidx][colidx] = LIVE
+            self.cell_states[rowidx][colidx] = self.LIVE
             self.increment_neighbors(rowidx, colidx)
 
         # death cells
         for rowidx, colidx in to_die:
-            self.cell_states[rowidx][colidx] = DEAD
+            self.cell_states[rowidx][colidx] = self.DEAD
             self.decrement_neighbors(rowidx, colidx)
 
         # return the boolean of were any changes made
