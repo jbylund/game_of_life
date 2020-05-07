@@ -33,23 +33,30 @@ class TestGameOfLife(unittest.TestCase):
         self.assertEqual(mygame.live_cell_count(), 4)
 
     def test_death(self):
+        mygame = GameOfLife(rows=3, cols=3)
+        while mygame.live_cell_count() != 9:
+            random.seed(time.time())
+            mygame.seed(9)
+
+        changed = mygame.advance()
+        self.assertEqual(changed, True)
+        self.assertEqual(mygame.live_cell_count(), 4)
+
+        changed = mygame.advance()
+        self.assertEqual(changed, True)
+        self.assertEqual(mygame.live_cell_count(), 0)
+
+        changed = mygame.advance()
+        self.assertEqual(changed, False)
+
+
+    def test_steady_state_condition(self):
         mygame = GameOfLife(rows=2, cols=2)
         while mygame.live_cell_count() != 4:
             random.seed(time.time())
             mygame.seed(4)
         changed = mygame.advance()
-        self.assertEqual(changed, True)
-        self.assertEqual(mygame.live_cell_count(), 0)
-
-
-    def test_neighbor_count(self):
-        pass
-
-    def test_all_dead_condition(self):
-        pass
-
-    def test_steady_state_condition(self):
-        pass
+        self.assertEqual(changed, False)
 
 
 if __name__ == '__main__':
