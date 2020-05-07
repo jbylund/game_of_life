@@ -40,8 +40,6 @@ class TestGameOfLife(unittest.TestCase):
 
         changed = mygame.advance()
         self.assertEqual(changed, True)
-        print(mygame.live_cells)
-        raise AssertionError("!!!")
         self.assertEqual(mygame.live_cell_count(), 4)
 
         changed = mygame.advance()
